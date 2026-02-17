@@ -13,6 +13,7 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
   const [text, setText] = useState('')
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isCameraMode, setIsCameraMode] = useState(false)
+  const [isFrontCamera, setIsFrontCamera] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -41,17 +42,88 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      })
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
+      // Check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Camera access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.')
+        return
+      }
+
+      console.log('Attempting to access camera...')
+      console.log('Browser:', navigator.userAgent)
+      
+      // First check if we have permission
+      try {
+        const permissions = await navigator.permissions.query({ name: 'camera' as PermissionName })
+        console.log('Camera permission status:', permissions.state)
+      } catch (e) {
+        console.log('Could not check camera permissions')
+      }
+
+      let stream;
+      
+      try {
+        console.log('Requesting environment camera...')
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: 'environment',
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          } 
+        })
+        console.log('Environment camera accessed successfully')
+        setIsFrontCamera(false)
+      } catch (err) {
+        console.log('Environment camera not available:', err)
+        console.log('Trying default camera...')
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ 
+            video: {
+              width: { ideal: 1920 },
+              height: { ideal: 1080 }
+            }
+          })
+          console.log('Default camera accessed successfully')
+          // Assume default camera is front-facing if environment not available
+          setIsFrontCamera(true)
+        } catch (err2) {
+          console.error('Failed to access any camera:', err2)
+          throw err2
+        }
+      }
+      
+      if (stream) {
+        console.log('Stream obtained, setting camera mode...')
         streamRef.current = stream
         setIsCameraMode(true)
+        
+        // Wait for video element to be rendered in the DOM
+        setTimeout(() => {
+          if (videoRef.current) {
+            console.log('Setting video stream...')
+            videoRef.current.srcObject = stream
+            
+            // Wait for video to be ready
+            videoRef.current.onloadedmetadata = () => {
+              console.log('Video metadata loaded')
+              videoRef.current?.play().then(() => {
+                console.log('Video playing')
+              }).catch(err => {
+                console.error('Error playing video:', err)
+              })
+            }
+            console.log('Camera started successfully')
+          } else {
+            console.error('Video ref is still null after timeout')
+          }
+        }, 100)
+      } else {
+        console.error('Stream is null')
+        throw new Error('Failed to obtain camera stream')
       }
     } catch (error) {
       console.error('Error accessing camera:', error)
-      alert('Could not access camera. Please check permissions.')
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      alert(`Could not access camera: ${errorMessage}\n\nPlease:\n1. Allow camera access when prompted\n2. Check if another app is using the camera\n3. Try refreshing the page`)
     }
   }
 
@@ -63,8 +135,18 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
       canvas.height = video.videoHeight
       const ctx = canvas.getContext('2d')
       if (ctx) {
-        ctx.drawImage(video, 0, 0)
-        const imageData = canvas.toDataURL('image/jpeg')
+        // Only flip the image if using front camera to fix mirroring
+        if (isFrontCamera) {
+          ctx.save()
+          ctx.scale(-1, 1)
+          ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height)
+          ctx.restore()
+        } else {
+          // Back camera - no flip needed
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+        }
+        
+        const imageData = canvas.toDataURL('image/jpeg', 0.95)
         console.log('Photo captured, data length:', imageData.length)
         setPreviewUrl(imageData)
         stopCamera()
@@ -147,8 +229,9 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
                   ref={videoRef}
                   autoPlay
                   playsInline
+                  muted
                   className="w-full rounded-lg"
-                  style={{ minHeight: '400px' }}
+                  style={{ minHeight: '400px', maxHeight: '600px' }}
                 />
               </div>
               <div className="flex gap-4">
