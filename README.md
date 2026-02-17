@@ -2,6 +2,8 @@
 
 AI-powered food label scanner that exposes misleading marketing claims and identifies harmful ingredients in plain English.
 
+Video here -> https://drive.google.com/file/d/1J75vbEZX0ZxLu-luXMm-aG71TFCIZsV0/view?usp=sharing
+
 ## Features
 
 - Upload image or paste ingredient text
