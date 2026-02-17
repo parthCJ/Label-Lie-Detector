@@ -176,7 +176,7 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
           onClick={() => setMode('image')}
           className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
             mode === 'image'
-              ? 'bg-blue-600 text-white shadow-lg'
+              ? 'bg-gray-700 text-white shadow-lg'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -186,7 +186,7 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
           onClick={() => setMode('text')}
           className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
             mode === 'text'
-              ? 'bg-blue-600 text-white shadow-lg'
+              ? 'bg-gray-700 text-white shadow-lg'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -202,14 +202,14 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={loading}
-                  className="flex-1 bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  className="flex-1 bg-gray-700 text-white py-4 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 >
                   {loading ? 'Analyzing...' : 'Choose File'}
                 </button>
                 <button
                   onClick={startCamera}
                   disabled={loading}
-                  className="flex-1 bg-green-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  className="flex-1 bg-gray-700 text-white py-4 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 >
                   Use Camera
                 </button>
@@ -237,7 +237,7 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
               <div className="flex gap-4">
                 <button
                   onClick={capturePhoto}
-                  className="flex-1 bg-green-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-green-700 transition-all shadow-lg"
+                  className="flex-1 bg-gray-700 text-white py-4 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-all shadow-lg"
                 >
                   Capture Photo
                 </button>
@@ -275,7 +275,7 @@ export default function ImageUploader({ onImageUpload, onTextSubmit, loading }: 
           <button
             onClick={handleTextSubmit}
             disabled={loading || !text.trim()}
-            className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gray-700 text-white py-4 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Analyze Text
           </button>

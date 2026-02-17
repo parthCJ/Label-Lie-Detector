@@ -29,13 +29,13 @@ export default function ProgressBar({ step }: ProgressBarProps) {
   const getCurrentStep = () => {
     switch (step) {
       case 'ocr':
-        return { text: 'Extracting text from image...', icon: '📸' }
+        return 'Extracting text from image...'
       case 'analyzing':
-        return { text: 'Analyzing ingredients...', icon: '🔬' }
+        return 'Analyzing ingredients...'
       case 'complete':
-        return { text: 'Analysis complete!', icon: '✓' }
+        return 'Analysis complete!'
       default:
-        return { text: 'Starting...', icon: '⏳' }
+        return 'Starting...'
     }
   }
 
@@ -45,9 +45,8 @@ export default function ProgressBar({ step }: ProgressBarProps) {
     <div className="mt-8 max-w-2xl mx-auto">
       <div className="bg-amber-50 rounded-2xl p-6 shadow-xl border border-amber-200">
         <div className="space-y-4">
-          <div className="flex items-center justify-center gap-3">
-            <span className="text-3xl">{currentStep.icon}</span>
-            <p className="text-gray-900 text-lg font-semibold">{currentStep.text}</p>
+          <div className="flex items-center justify-center">
+            <p className="text-gray-900 text-lg font-semibold">{currentStep}</p>
           </div>
 
           <div className="relative">
