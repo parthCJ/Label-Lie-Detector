@@ -4,18 +4,27 @@ import { useState } from 'react'
 import ImageUploader from '@/components/ImageUploader'
 import AnalysisResults from '@/components/AnalysisResults'
 import QuickDemo from '@/components/QuickDemo'
-import InfoSection from '@/components/InfoSection'
+import ProgressBar from '@/components/ProgressBar'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import { AnalysisResponse } from '@/types'
 
 export default function Home() {
   const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null)
   const [loading, setLoading] = useState(false)
+  const [loadingStep, setLoadingStep] = useState<'idle' | 'ocr' | 'analyzing' | 'complete'>('idle')
   const [error, setError] = useState<string | null>(null)
+
+  const resetAnalysis = () => {
+    setAnalysis(null)
+    setError(null)
+    setLoadingStep('idle')
+  }
 
   const handleAnalysis = async (imageData: string) => {
     setLoading(true)
     setError(null)
     setAnalysis(null)
+    setLoadingStep('ocr')
 
     try {
       console.log('Starting analysis...')
@@ -35,13 +44,18 @@ export default function Home() {
         throw new Error(errorData.error || 'Analysis failed')
       }
 
+      setLoadingStep('analyzing')
       const data = await response.json()
       console.log('Analysis complete:', data)
-      setAnalysis(data)
+      setLoadingStep('complete')
+      setTimeout(() => {
+        setAnalysis(data)
+        setLoading(false)
+      }, 500)
     } catch (err) {
       console.error('Error:', err)
       setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
+      setLoadingStep('idle')
       setLoading(false)
     }
   }
@@ -50,6 +64,7 @@ export default function Home() {
     setLoading(true)
     setError(null)
     setAnalysis(null)
+    setLoadingStep('analyzing')
 
     try {
       const response = await fetch('/api/analyze-text', {
@@ -64,11 +79,15 @@ export default function Home() {
         throw new Error('Analysis failed')
       }
 
+      setLoadingStep('complete')
       const data = await response.json()
-      setAnalysis(data)
+      setTimeout(() => {
+        setAnalysis(data)
+        setLoading(false)
+      }, 500)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
+      setLoadingStep('idle')
       setLoading(false)
     }
   }
@@ -105,14 +124,14 @@ export default function Home() {
           )}
 
           {loading && (
-            <div className="mt-8 text-center">
-              <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-              <p className="text-gray-900 mt-4 text-lg">Analyzing ingredients...</p>
-            </div>
+            <>
+              <ProgressBar step={loadingStep} />
+              <SkeletonLoader />
+            </>
           )}
 
           {analysis && !loading && (
-            <AnalysisResults analysis={analysis} />
+            <AnalysisResults analysis={analysis} onReset={resetAnalysis} />
           )}
         </div>
       </div>

@@ -1,12 +1,62 @@
 'use client'
 
 import { AnalysisResponse } from '@/types'
+import { useRef, useState } from 'react'
 
 interface AnalysisResultsProps {
   analysis: AnalysisResponse
+  onReset: () => void
 }
 
-export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
+export default function AnalysisResults({ analysis, onReset }: AnalysisResultsProps) {
+  const resultsRef = useRef<HTMLDivElement>(null)
+  const [showCopied, setShowCopied] = useState(false)
+
+  const handleShare = async () => {
+    const shareText = `Label Lie Detector Analysis:\n\n${analysis.productName || 'Product'}\n\nSafety Score:\nRed: ${analysis.overallScore.red} | Yellow: ${analysis.overallScore.yellow} | Green: ${analysis.overallScore.green}\n\nSummary: ${analysis.summary}\n\nAnalyze your food labels at: ${window.location.href}`
+    
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Label Lie Detector Results',
+          text: shareText,
+        })
+      } else {
+        await navigator.clipboard.writeText(shareText)
+        setShowCopied(true)
+        setTimeout(() => setShowCopied(false), 2000)
+      }
+    } catch (err) {
+      console.error('Error sharing:', err)
+    }
+  }
+
+  const handleExportImage = async () => {
+    if (!resultsRef.current) return
+    
+    try {
+      // Dynamic import to avoid SSR issues
+      const html2canvas = (await import('html2canvas')).default
+      const canvas = await html2canvas(resultsRef.current, {
+        backgroundColor: '#f0fdf4',
+        scale: 2,
+      })
+      
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = `label-analysis-${Date.now()}.png`
+          link.click()
+          URL.revokeObjectURL(url)
+        }
+      })
+    } catch (err) {
+      console.error('Error exporting image:', err)
+      alert('Failed to export image. Please try again.')
+    }
+  }
   const getCategoryColor = (category: 'red' | 'yellow' | 'green') => {
     switch (category) {
       case 'red':
@@ -47,7 +97,40 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
   const greenPercentage = totalIngredients > 0 ? (analysis.overallScore.green / totalIngredients) * 100 : 0
 
   return (
-    <div className="mt-8 space-y-6">
+    <div ref={resultsRef} className="mt-8 space-y-6">
+      {/* Action Buttons */}
+      <div className="flex flex-wrap gap-3 justify-center">
+        <button
+          onClick={onReset}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-lg"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Scan Another Product
+        </button>
+        
+        <button
+          onClick={handleShare}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-lg"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          {showCopied ? 'Copied!' : 'Share Results'}
+        </button>
+        
+        <button
+          onClick={handleExportImage}
+          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-lg"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Export as Image
+        </button>
+      </div>
+
       {analysis.productName && (
         <div className="bg-amber-50 rounded-2xl p-6 shadow-xl border border-amber-200">
           <h2 className="text-3xl font-bold text-gray-900">{analysis.productName}</h2>
