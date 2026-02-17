@@ -46,17 +46,21 @@ Focus on ingredients that are actually harmful or deceptive. Don't flag basic in
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('Analyze API called')
     const { image } = await request.json()
 
     if (!image) {
+      console.error('No image provided')
       return NextResponse.json(
         { error: 'No image provided' },
         { status: 400 }
       )
     }
 
+    console.log('Image received, length:', image.length)
     const base64Data = image.replace(/^data:image\/\w+;base64,/, '')
     
+    console.log('Starting OCR with Groq...')
     const ocrCompletion = await groq.chat.completions.create({
       messages: [
         {
@@ -72,23 +76,26 @@ export async function POST(request: NextRequest) {
                 url: `data:image/jpeg;base64,${base64Data}`,
               },
             },
-          ],
+          ] as any,
         },
       ],
-      model: 'llama-3.2-11b-vision-preview',
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
       temperature: 0.3,
       max_tokens: 1024,
     })
 
     const extractedText = ocrCompletion.choices[0]?.message?.content || ''
+    console.log('OCR complete, extracted text:', extractedText.substring(0, 100))
 
     if (!extractedText.trim()) {
+      console.error('No text extracted from image')
       return NextResponse.json(
         { error: 'Could not extract text from image' },
         { status: 400 }
       )
     }
 
+    console.log('Starting ingredient analysis...')
     const analysisCompletion = await groq.chat.completions.create({
       messages: [
         {
@@ -100,13 +107,14 @@ export async function POST(request: NextRequest) {
           content: extractedText,
         },
       ],
-      model: 'llama-3.1-70b-versatile',
+      model: 'llama-3.3-70b-versatile',
       temperature: 0.2,
       max_tokens: 2048,
       response_format: { type: 'json_object' },
     })
 
     const analysisText = analysisCompletion.choices[0]?.message?.content || '{}'
+    console.log('Analysis complete')
     const analysis: AnalysisResponse = JSON.parse(analysisText)
     analysis.extractedText = extractedText
 
@@ -114,7 +122,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Analysis error:', error)
     return NextResponse.json(
-      { error: 'Failed to analyze image' },
+      { error: `Failed to analyze image: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     )
   }

@@ -18,6 +18,7 @@ export default function Home() {
     setAnalysis(null)
 
     try {
+      console.log('Starting analysis...')
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
@@ -26,13 +27,19 @@ export default function Home() {
         body: JSON.stringify({ image: imageData }),
       })
 
+      console.log('Response status:', response.status)
+      
       if (!response.ok) {
-        throw new Error('Analysis failed')
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('API Error:', errorData)
+        throw new Error(errorData.error || 'Analysis failed')
       }
 
       const data = await response.json()
+      console.log('Analysis complete:', data)
       setAnalysis(data)
     } catch (err) {
+      console.error('Error:', err)
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
@@ -67,13 +74,13 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="container mx-auto px-4 py-8">
-        <header className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4">
+    <main className="min-h-screen relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <header className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Label Lie Detector
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto px-4">
             Expose misleading marketing claims and harmful ingredients in your food products
           </p>
         </header>
@@ -88,20 +95,19 @@ export default function Home() {
           {!analysis && !loading && (
             <>
               <QuickDemo onSelectSample={handleTextAnalysis} />
-              <InfoSection />
             </>
           )}
 
           {error && (
-            <div className="mt-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-200">
+            <div className="mt-6 p-4 bg-red-50 border border-red-300 rounded-lg text-red-700">
               Error: {error}
             </div>
           )}
 
           {loading && (
             <div className="mt-8 text-center">
-              <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500"></div>
-              <p className="text-white mt-4 text-lg">Analyzing ingredients...</p>
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+              <p className="text-gray-900 mt-4 text-lg">Analyzing ingredients...</p>
             </div>
           )}
 

@@ -32,34 +32,42 @@ An OCR-powered scanner that extracts ingredient text, filters out marketing fluf
 ## Quick Start
 
 ### 1. Install Dependencies
+
 ```powershell
 npm install
 ```
 
 ### 2. Configure API Key
+
 Add your Groq API key to `.env.local`:
+
 ```
 GROQ_API_KEY=your_groq_api_key_here
 ```
+
 Get a free API key at: https://console.groq.com
 
 ### 3. Run Development Server
+
 ```powershell
 npm run dev
 ```
 
 ### 4. Open Application
+
 Navigate to http://localhost:3000
 
 ## Usage
 
 ### Method 1: Image Analysis
+
 1. Click "Choose File" or "Use Camera"
 2. Capture/upload a photo of the ingredients label
 3. Wait for AI analysis (5-10 seconds)
 4. Review color-coded results
 
 ### Method 2: Text Analysis
+
 1. Switch to "Paste Text" tab
 2. Copy ingredients from packaging or online store
 3. Paste and click "Analyze Text"
@@ -70,21 +78,24 @@ Navigate to http://localhost:3000
 Try these sample ingredients lists:
 
 **Misleading Protein Bar:**
+
 ```
-Maltitol Syrup, Soy Protein Isolate, Maltodextrin, Glycerin, 
-Palm Kernel Oil, Fructose, Natural Flavors, Carrageenan, 
+Maltitol Syrup, Soy Protein Isolate, Maltodextrin, Glycerin,
+Palm Kernel Oil, Fructose, Natural Flavors, Carrageenan,
 Sucralose, Artificial Flavors, BHT, Red 40, Yellow 5
 ```
 
 **Diet Soda with Hidden Risks:**
+
 ```
-Carbonated Water, Caramel Color, Aspartame, Phosphoric Acid, 
+Carbonated Water, Caramel Color, Aspartame, Phosphoric Acid,
 Potassium Benzoate, Natural Flavors, Acesulfame Potassium
 ```
 
 **"Healthy" Cereal:**
+
 ```
-Whole Grain Wheat, Sugar, Corn Syrup, Modified Corn Starch, 
+Whole Grain Wheat, Sugar, Corn Syrup, Modified Corn Starch,
 Maltodextrin, Salt, Red 40, Yellow 5, Blue 1, BHT
 ```
 
@@ -113,9 +124,11 @@ hackathon/
 ## API Endpoints
 
 ### POST /api/analyze
+
 Analyzes product label images using vision AI and ingredient analysis.
 
 **Request:**
+
 ```json
 {
   "image": "data:image/jpeg;base64,..."
@@ -123,6 +136,7 @@ Analyzes product label images using vision AI and ingredient analysis.
 ```
 
 **Response:**
+
 ```json
 {
   "productName": "Product Name",
@@ -135,9 +149,11 @@ Analyzes product label images using vision AI and ingredient analysis.
 ```
 
 ### POST /api/analyze-text
+
 Analyzes ingredient text directly without OCR.
 
 **Request:**
+
 ```json
 {
   "text": "Ingredients: ..."
@@ -149,11 +165,13 @@ Analyzes ingredient text directly without OCR.
 ## Key Algorithms
 
 ### Ingredient Categorization
+
 - **RED**: Carcinogens, harmful preservatives (E211, E320, BHA, BHT), trans fats
 - **YELLOW**: Hidden sugars, artificial colors/flavors, thickeners
 - **GREEN**: Natural ingredients, whole foods, safe additives
 
 ### Detection Patterns
+
 - Hidden sugars: 18+ aliases (maltodextrin, dextrose, rice syrup, etc.)
 - Harmful preservatives: 15+ E-numbers and chemical names
 - Artificial additives: 25+ colors, flavors, and modifiers
