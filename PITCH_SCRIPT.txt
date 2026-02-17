@@ -1,0 +1,38 @@
+Y-COMBINATOR 1-MINUTE PITCH SCRIPT
+LABEL LIE DETECTOR
+===================================
+
+[0:00 - 0:15] THE PROBLEM
+"Every day, millions of people scan food labels trying to eat healthier. But here's the problem: 67% of food products make misleading health claims. Terms like 'natural,' 'wholesome,' and 'healthy' are unregulated marketing fluff. The average consumer spends 8 seconds reading a label and has no idea what half the ingredients actually do to their body."
+
+[0:15 - 0:30] THE SOLUTION
+"That's why we built Label Lie Detector. Point your phone at any food label, and in seconds, we cut through the marketing BS. Our AI extracts ingredients, identifies harmful additives, and explains health impacts in plain English. Red for concerning, yellow for questionable, green for safe."
+
+[0:30 - 0:45] THE MARKET & WHY NOW
+"The health-conscious food market is $1 trillion and growing 8% annually. People want transparency, but reading labels is hard and time-consuming. With recent advances in vision AI and mobile cameras on every phone, we can finally make this instant and accessible to everyone."
+
+[0:45 - 0:55] THE TRACTION & VISION
+"We built this in 3 hours for a hackathon. It already works with any food product. Next steps: build a database of 500,000 ingredients, add personalized health profiles, and partner with grocery chains. Imagine scanning every product before it hits your cart."
+
+[0:55 - 1:00] THE ASK
+"We're Label Lie Detector. Making food transparency instant. Thank you."
+
+===================================
+
+DELIVERY TIPS:
+- Speak confidently and clearly at a natural pace
+- Show the app working during "The Solution" section
+- Use hand gestures to emphasize key numbers
+- Make eye contact with the camera
+- Smile when you say the company name
+- End with a strong, confident tone
+
+VISUAL CUES FOR VIDEO:
+- [0:00-0:15]: B-roll of confusing food labels, person looking confused in grocery store
+- [0:15-0:30]: Demo of app scanning label, showing results with traffic light colors
+- [0:30-0:45]: Graphics showing market size numbers
+- [0:45-0:55]: Quick montage of app features, user testimonials
+- [0:55-1:00]: Logo reveal with tagline
+
+ALTERNATIVE HOOK (if you want to start stronger):
+"89% of people say they want to eat healthier. But when they're standing in a grocery aisle staring at a label with 47 ingredients they can't pronounce, most just give up. We're solving that."

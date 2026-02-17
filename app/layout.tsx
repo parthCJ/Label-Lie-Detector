@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { JetBrains_Mono } from 'next/font/google'
+import { Open_Sans } from 'next/font/google'
 import './globals.css'
 
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'] })
+const openSans = Open_Sans({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Label Lie Detector - Consumer Safety Scanner',
@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={jetbrainsMono.className}>{children}</body>
+      <body className={openSans.className}>{children}</body>
     </html>
   )
 }
