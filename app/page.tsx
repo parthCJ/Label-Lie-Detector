@@ -95,11 +95,11 @@ export default function Home() {
   return (
     <main className="min-h-screen relative z-10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        <header className="text-center mb-8 sm:mb-12">
+        <header className="text-center mb-8 sm:mb-12 bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-amber-200">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Label Lie Detector
           </h1>
-          <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto px-4">
+          <p className="text-lg sm:text-xl text-gray-800 max-w-2xl mx-auto px-4 font-medium">
             Expose misleading marketing claims and harmful ingredients in your food products
           </p>
         </header>
